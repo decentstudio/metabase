@@ -28,13 +28,3 @@
 (defmethod driver/can-connect? :aws-dynamo-db
   [_ details]
   (can-connect? details))
-
-(comment
-  (can-connect? {:api :dynamodb
-                 :table-name "my-tablez"
-                 :access-key-id "AKIAW4FBP63ZZMXZZUEW"
-                 :secret-access-key "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"
-                 :region "us-east-1"})
-  
-  
-  )
