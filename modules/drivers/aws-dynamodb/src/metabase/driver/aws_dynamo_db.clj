@@ -17,10 +17,9 @@
                 (select-keys args [:access-key-id :secret-access-key]))}))
 
 (defn can-connect?
-  [{:keys [api region table-name access-key-id secret-access-key] :as details}]
+  [{:keys [api region access-key-id secret-access-key] :as details}]
   (let [conn-attempt (aws/invoke (get-client details)
-                                 {:op :DescribeTable
-                                  :request {:TableName table-name}})]
+                                 {:op :ListTables})]
     (if (s/valid? ::anom/anomaly conn-attempt)
       (throw (Exception. (:message conn-attempt)))
       true)))

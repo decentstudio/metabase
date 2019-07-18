@@ -22,7 +22,3 @@ connection-properties:
     display-name: AWS Secret Access Key
     placeholder: 12345678910
     required: true
-  - name: table-name
-    display-name: AWS DynamoDB Table Name
-    placeholder: my-table
-    required: true
