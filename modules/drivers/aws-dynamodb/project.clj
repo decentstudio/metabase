@@ -4,7 +4,9 @@
   :dependencies
   [[com.cognitect.aws/api "0.8.345"]
    [com.cognitect.aws/endpoints "1.1.11.590"]
-   [com.cognitect.aws/dynamodb "726.2.484.0"]]
+   [com.cognitect.aws/dynamodb "726.2.484.0"]
+   [org.clojure/spec.alpha "0.2.176"]
+   [com.cognitect/anomalies "0.1.12"]]
 
   :profiles
   {:provided
