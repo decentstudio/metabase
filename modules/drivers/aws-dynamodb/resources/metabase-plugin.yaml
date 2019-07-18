@@ -1,0 +1,24 @@
+info:
+  name: Metabase DynamoDB Driver
+  version: 0.0.1-SNAPSHOT
+  description: Metabase database driver for AWS DynamoDB
+driver:
+  name: aws-dynamo-db
+  display-name: AWS DynamoDB
+  lazy-load: true
+init:
+  - step: load-namespace
+    namespace: metabase.driver.aws-dynamo-db
+connection-properties:
+  - name: region
+    display-name: AWS Region
+    placeholder: 'us-east-1'
+    required: true
+  - name: access-key-id
+    display-name: AWS Access Key ID
+    placeholder: 12345678910
+    required: true
+  - name: secret-access-key
+    display-name: AWS Secret Access Key
+    placeholder: 12345678910
+    required: true
