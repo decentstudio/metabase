@@ -27,3 +27,16 @@
 (defmethod driver/can-connect? :aws-dynamo-db
   [_ details]
   (can-connect? details))
+
+(defn list-all-tables
+  "Lists all DynamoDB tables taking pagination into account."
+  [database])
+
+(defn describe-database
+  "Describe database as required by metabase."
+  [database]
+  (let [tables (list-all-tables database)]))
+
+(defmethod driver/describe-database :aws-dynamo-db 
+  [_ database]
+  (describe-database database))
