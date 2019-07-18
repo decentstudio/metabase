@@ -18,13 +18,23 @@
 
 (defn can-connect?
   [{:keys [api region table-name access-key-id secret-access-key] :as details}]
-  (if (s/valid? ::anom/anomaly 
-                (aws/invoke (get-client details)
-                            {:op :DescribeTable
-                             :request {:TableName table-name}}))
-    false
-    true))
+  (let [conn-attempt (aws/invoke (get-client details)
+                                 {:op :DescribeTable
+                                  :request {:TableName table-name}})]
+    (if (s/valid? ::anom/anomaly conn-attempt)
+      (throw (Exception. (:message conn-attempt)))
+      true)))
 
 (defmethod driver/can-connect? :aws-dynamo-db
   [_ details]
   (can-connect? details))
+
+(comment
+  (can-connect? {:api :dynamodb
+                 :table-name "my-tablez"
+                 :access-key-id "AKIAW4FBP63ZZMXZZUEW"
+                 :secret-access-key "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"
+                 :region "us-east-1"})
+  
+  
+  )
