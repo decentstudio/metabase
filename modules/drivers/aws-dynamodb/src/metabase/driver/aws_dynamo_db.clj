@@ -17,8 +17,8 @@
                 (select-keys args [:access-key-id :secret-access-key]))}))
 
 (defn can-connect?
-  [{:keys [api region access-key-id secret-access-key] :as details}]
-  (let [conn-attempt (aws/invoke (get-client details)
+  [{:keys [region access-key-id secret-access-key] :as details}]
+  (let [conn-attempt (aws/invoke (get-client (assoc details :api :dynamodb))
                                  {:op :ListTables})]
     (if (s/valid? ::anom/anomaly conn-attempt)
       (throw (Exception. (:message conn-attempt)))
