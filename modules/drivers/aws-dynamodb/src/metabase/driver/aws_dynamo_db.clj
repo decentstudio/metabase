@@ -6,6 +6,8 @@
             [cognitect.anomalies :as anom]
             [clojure.spec.alpha :as s]))
 
+(set! *warn-on-reflection* true)
+
 (driver/register! :aws-dynamo-db)
 
 (defn get-client 
