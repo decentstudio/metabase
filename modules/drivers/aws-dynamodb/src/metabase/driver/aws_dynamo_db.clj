@@ -23,7 +23,7 @@
   (let [conn-attempt (aws/invoke (get-client (assoc details :api :dynamodb))
                                  {:op :ListTables})]
     (if (s/valid? ::anom/anomaly conn-attempt)
-      (throw (Exception. (:message conn-attempt)))
+      (throw (Exception. ^String (:message conn-attempt)))
       true)))
 
 (defmethod driver/can-connect? :aws-dynamo-db
