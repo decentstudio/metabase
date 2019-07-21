@@ -1,4 +1,5 @@
 (ns metabase.driver.aws-dynamo-db
+  "Apparently `database` contains a `details` key. This wasn't easy to figure out."
   (:require [metabase.driver :as driver]
             [cognitect.aws.client.api :as aws]
             [cognitect.aws.credentials :as aws-creds]
