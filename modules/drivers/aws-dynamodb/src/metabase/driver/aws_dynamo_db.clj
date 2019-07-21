@@ -30,7 +30,10 @@
   [_ details]
   (can-connect? details))
 
-(defn list-all-tables
+(defn details->client [details]
+  (get-client (assoc details :api :dynamodb)))
+
+(defn list-all-tables!
   "Lists all DynamoDB tables taking pagination into account."
   [database])
 
