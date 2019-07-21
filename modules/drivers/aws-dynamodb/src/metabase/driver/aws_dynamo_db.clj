@@ -44,11 +44,11 @@
   {:name s
    :schema ""})
 
-(defn describe-database
+(defn describe-database!
   "Describe database as required by metabase."
   [details]
   {:tables (into #{} (r/map ->DatabaseMetadataTable (list-all-tables! details)))})
 
 (defmethod driver/describe-database :aws-dynamo-db 
   [_ {:keys [details]}]
-  (describe-database details))
+  (describe-database! details))
