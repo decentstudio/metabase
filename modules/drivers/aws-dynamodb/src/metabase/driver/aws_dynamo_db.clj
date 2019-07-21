@@ -35,9 +35,6 @@
   [_ details]
   (can-connect? (details->client details)))
 
-(defn details->client [details]
-  (get-client (assoc details :api :dynamodb)))
-
 (defn list-all-tables!
   "Return a lazy sequence of all table names, accounting for pagination."
   ([client] (list-all-tables! client :init))
