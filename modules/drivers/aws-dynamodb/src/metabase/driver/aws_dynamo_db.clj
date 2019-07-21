@@ -35,10 +35,17 @@
   (get-client (assoc details :api :dynamodb)))
 
 (defn list-all-tables!
-  "Lists all DynamoDB tables taking pagination into account."
-  [details]
-  (:TableNames (aws/invoke (details->client details)
-                           {:op :ListTables})))
+  "Return a lazy sequence of all table names, accounting for pagination."
+  ([details] (list-all-tables! details :init))
+  ([details cursor]
+   (if cursor
+     (let [result (aws/invoke (details->client details)
+                              (merge {:op :ListTables}
+                                     (when (and cursor (not= :init cursor))
+                                       {:request {:ExclusiveStartTableName cursor}})))]
+       (lazy-seq (concat (:TableNames result)
+                         (list-all-tables! details (:LastEvaluatedTableName result)))))
+     nil)))
 
 (defn ->DatabaseMetadataTable [^String s]
   {:name s
