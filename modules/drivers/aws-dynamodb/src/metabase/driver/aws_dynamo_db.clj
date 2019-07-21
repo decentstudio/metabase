@@ -20,9 +20,12 @@
                (aws-creds/basic-credentials-provider
                 (select-keys args [:access-key-id :secret-access-key]))}))
 
+(defn details->client [details]
+  (get-client (assoc details :api :dynamodb)))
+
 (defn can-connect?
-  [{:keys [region access-key-id secret-access-key] :as details}]
-  (let [conn-attempt (aws/invoke (get-client (assoc details :api :dynamodb))
+  [client]
+  (let [conn-attempt (aws/invoke client
                                  {:op :ListTables})]
     (if (s/valid? ::anom/anomaly conn-attempt)
       (throw (Exception. ^String (:message conn-attempt)))
@@ -30,22 +33,22 @@
 
 (defmethod driver/can-connect? :aws-dynamo-db
   [_ details]
-  (can-connect? details))
+  (can-connect? (details->client details)))
 
 (defn details->client [details]
   (get-client (assoc details :api :dynamodb)))
 
 (defn list-all-tables!
   "Return a lazy sequence of all table names, accounting for pagination."
-  ([details] (list-all-tables! details :init))
-  ([details cursor]
+  ([client] (list-all-tables! client :init))
+  ([client cursor]
    (if cursor
-     (let [result (aws/invoke (details->client details)
+     (let [result (aws/invoke client
                               (merge {:op :ListTables}
                                      (when (and cursor (not= :init cursor))
                                        {:request {:ExclusiveStartTableName cursor}})))]
        (lazy-seq (concat (:TableNames result)
-                         (list-all-tables! details (:LastEvaluatedTableName result)))))
+                         (list-all-tables! client (:LastEvaluatedTableName result)))))
      nil)))
 
 (defn ->DatabaseMetadataTable [^String s]
@@ -54,9 +57,9 @@
 
 (defn describe-database!
   "Describe database as required by metabase."
-  [details]
-  {:tables (into #{} (r/map ->DatabaseMetadataTable (list-all-tables! details)))})
+  [client]
+  {:tables (into #{} (r/map ->DatabaseMetadataTable (list-all-tables! (details->client details))))})
 
 (defmethod driver/describe-database :aws-dynamo-db 
   [_ {:keys [details]}]
-  (describe-database! details))
+  (describe-database! (details->client details)))
