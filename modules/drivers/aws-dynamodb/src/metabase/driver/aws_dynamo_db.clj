@@ -35,15 +35,18 @@
   [_ details]
   (can-connect? (details->client details)))
 
+(defn list-tables! [client & {:keys [cursor]}]
+  (aws/invoke client
+              (merge {:op :ListTables}
+                     (when cursor
+                       {:request {:ExclusiveStartTableName cursor}}))))
+
 (defn list-all-tables!
   "Return a lazy sequence of all table names, accounting for pagination."
   ([client] (list-all-tables! client :init))
   ([client cursor]
    (if cursor
-     (let [result (aws/invoke client
-                              (merge {:op :ListTables}
-                                     (when (and cursor (not= :init cursor))
-                                       {:request {:ExclusiveStartTableName cursor}})))]
+     (let [result (list-tables! client :cursor (if (= :init cursor) nil cursor))]
        (lazy-seq (concat (:TableNames result)
                          (list-all-tables! client (:LastEvaluatedTableName result)))))
      nil)))
