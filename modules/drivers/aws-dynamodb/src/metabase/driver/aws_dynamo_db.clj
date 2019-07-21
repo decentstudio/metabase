@@ -4,7 +4,8 @@
             [cognitect.aws.credentials :as aws-creds]
             [cognitect.aws.region :as aws-region]
             [cognitect.anomalies :as anom]
-            [clojure.spec.alpha :as s]))
+            [clojure.spec.alpha :as s]
+            [clojure.core.reducers :as r]))
 
 (set! *warn-on-reflection* true)
 
@@ -35,13 +36,19 @@
 
 (defn list-all-tables!
   "Lists all DynamoDB tables taking pagination into account."
-  [database])
+  [details]
+  (:TableNames (aws/invoke (details->client details)
+                           {:op :ListTables})))
+
+(defn ->DatabaseMetadataTable [^String s]
+  {:name s
+   :schema ""})
 
 (defn describe-database
   "Describe database as required by metabase."
-  [database]
-  (let [tables (list-all-tables database)]))
+  [details]
+  {:tables (into #{} (r/map ->DatabaseMetadataTable (list-all-tables! details)))})
 
 (defmethod driver/describe-database :aws-dynamo-db 
-  [_ database]
-  (describe-database database))
+  [_ {:keys [details]}]
+  (describe-database details))
